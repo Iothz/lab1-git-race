@@ -7,8 +7,26 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.time.Instant
+import java.time.ZoneId
 
 import es.unizar.webeng.hello.RequestCounter
+
+internal fun timeGreeting(
+    name: String,
+    instant: Instant = Instant.now(),
+    zone: ZoneId = ZoneId.systemDefault()
+): String {
+    val hour = instant.atZone(zone).hour
+    val greeting = when (hour) {
+        in 6..11 -> "Good morning"
+        in 12..17 -> "Good afternoon"
+        in 18..21 -> "Good evening"
+        else -> "Good night"
+    }
+
+    return "$greeting, $name!"
+}
 
 @Controller
 class HelloController(
@@ -25,7 +43,7 @@ class HelloController(
     ): String {
         val petitionCount = if (count) requestCounter.increment() else requestCounter.getCurrentCount()
 
-        val greeting = if (name.isNotBlank()) "Hello, $name!" else message
+        val greeting = if (name.isNotBlank()) timeGreeting(name) else message
         model.addAttribute("message", greeting)
         model.addAttribute("name", name)
         model.addAttribute("petitionCount", petitionCount)
@@ -42,9 +60,10 @@ class HelloApiController(
     @GetMapping("/api/hello", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun helloApi(@RequestParam(defaultValue = "World") name: String): Map<String, String> {
         val petitionCount = requestCounter.increment()
+
         return mapOf(
-            "message" to "Hello, $name!",
-            "timestamp" to java.time.Instant.now().toString(),
+            "message" to timeGreeting(name),
+            "timestamp" to Instant.now().toString(),
             "petitionCount" to petitionCount.toString()
         )
     }
