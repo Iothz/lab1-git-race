@@ -79,7 +79,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Test web page
     testWebBtn.addEventListener('click', async function() {
         const name = webNameInput.value.trim();
-        const url = name ? `/?name=${encodeURIComponent(name)}` : '/';
+        const params = new URLSearchParams({ count: 'true' });
+        if (name) params.set('name', name);
+        const url = `/?${params.toString()}`;
         
         displayRequestInfo(url, 'GET');
         
@@ -88,6 +90,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.text();
             
             displayResponseInfo(response.status, response.statusText, data, 'text/html;charset=UTF-8');
+
+            if (response.ok) {
+                const page = new DOMParser().parseFromString(data, 'text/html');
+                const count = page.querySelector('#petitionCount')?.textContent;
+                if (count) document.querySelector('#petitionCount').textContent = count;
+            }
         } catch (error) {
             displayResponseInfo(0, 'Network Error', { error: error.message }, 'application/json');
         }
@@ -109,6 +117,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update the main message in the HTML app
             if (response.ok && data.message) {
                 updateMainMessage(data.message, name);
+            }
+            if (response.ok && data.petitionCount) {
+                document.querySelector('#petitionCount').textContent = data.petitionCount;
             }
         } catch (error) {
             displayResponseInfo(0, 'Network Error', { error: error.message });
@@ -164,17 +175,23 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 3000);
     }
-    
+
     // Test health endpoint
     testHealthBtn.addEventListener('click', async function() {
-        const url = '/actuator/health';
+        const params = new URLSearchParams({ count: 'true' });
+        const url = `/actuator/health?${params.toString()}`;
         
         displayRequestInfo(url, 'GET');
         
         try {
             const response = await fetch(url);
             const data = await response.json();
-            
+
+            const requestCount = response.headers.get('X-Request-Count');
+            if (response.ok && requestCount) {
+                document.querySelector('#petitionCount').textContent = requestCount;
+            }
+
             displayResponseInfo(response.status, response.statusText, data);
         } catch (error) {
             displayResponseInfo(0, 'Network Error', { error: error.message });
@@ -443,7 +460,7 @@ This is how professional Spring Boot developers work!`);
         
         // Fallback: Check connection every 1 second for faster detection
         setInterval(checkConnection, 1000);
-        
+
         // Additional method: Check if page content has changed
         let lastPageContent = '';
         setInterval(() => {
@@ -472,7 +489,7 @@ This is how professional Spring Boot developers work!`);
                     });
             }
         }, 2000);
-        
+
         // Additional check: Monitor for page visibility changes
         let lastCheckTime = Date.now();
         setInterval(() => {

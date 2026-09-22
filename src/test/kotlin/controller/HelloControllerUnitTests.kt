@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.ui.Model
 import org.springframework.ui.ExtendedModelMap
+import es.unizar.webeng.hello.RequestCounter
 
 class HelloControllerUnitTests {
     private lateinit var controller: HelloController
@@ -12,7 +13,7 @@ class HelloControllerUnitTests {
     
     @BeforeEach
     fun setup() {
-        controller = HelloController("Test Message")
+        controller = HelloController("Test Message", RequestCounter())
         model = ExtendedModelMap()
     }
     
@@ -36,7 +37,7 @@ class HelloControllerUnitTests {
     
     @Test
     fun `should return API response with timestamp`() {
-        val apiController = HelloApiController()
+        val apiController = HelloApiController(RequestCounter())
         val response = apiController.helloApi("Test")
         
         assertThat(response).containsKey("message")

@@ -10,8 +10,11 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.context.annotation.Import
+import es.unizar.webeng.hello.RequestCounter
 
 @WebMvcTest(HelloController::class, HelloApiController::class)
+@Import(RequestCounter::class)
 class HelloControllerMVCTests {
     @Value("\${app.message:Welcome to the Modern Web App!}")
     private lateinit var message: String
@@ -49,4 +52,3 @@ class HelloControllerMVCTests {
             .andExpect(jsonPath("$.timestamp").exists())
     }
 }
-
