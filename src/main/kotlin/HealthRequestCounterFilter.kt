@@ -24,7 +24,10 @@ class HealthRequestCounterFilter(
         filterChain: FilterChain
     ) {
         if (request.method == "GET" && request.requestURI == "/actuator/health") {
-            requestCounter.increment()
+            if (request.getParameter("count") == "true") {
+                val count = requestCounter.increment()
+                response.setHeader("X-Request-Count", count.toString())
+            }
         }
 
         filterChain.doFilter(request, response)

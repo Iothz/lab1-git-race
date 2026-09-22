@@ -175,17 +175,23 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 3000);
     }
-    
+
     // Test health endpoint
     testHealthBtn.addEventListener('click', async function() {
-        const url = '/actuator/health';
+        const params = new URLSearchParams({ count: 'true' });
+        const url = `/actuator/health?${params.toString()}`;
         
         displayRequestInfo(url, 'GET');
         
         try {
             const response = await fetch(url);
             const data = await response.json();
-            
+
+            const requestCount = response.headers.get('X-Request-Count');
+            if (response.ok && requestCount) {
+                document.querySelector('#petitionCount').textContent = requestCount;
+            }
+
             displayResponseInfo(response.status, response.statusText, data);
         } catch (error) {
             displayResponseInfo(0, 'Network Error', { error: error.message });
