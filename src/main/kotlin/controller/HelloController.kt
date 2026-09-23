@@ -66,7 +66,7 @@ class HelloApiController(
 ) {
 
     @GetMapping("/api/hello", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun helloApi(@RequestParam(defaultValue = "World") name: String): Map<String, String> {
+    fun helloApi(@RequestParam(defaultValue = "World") name: String): Map<String, Any> {
         val petitionCount = requestCounter.increment()
         val greeting = timeGreeting(name)
         messageLog.addMessage(greeting)
@@ -75,7 +75,7 @@ class HelloApiController(
             "message" to greeting,
             "timestamp" to Instant.now().toString(),
             "petitionCount" to petitionCount.toString(),
-            "messages" to messageLog.getMessages().joinToString(", ")
+            "messages" to messageLog.getMessages()
         )
     }
 }
