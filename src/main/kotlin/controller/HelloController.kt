@@ -1,5 +1,6 @@
 package es.unizar.webeng.hello.controller
 
+import es.unizar.webeng.hello.MessageLog
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
@@ -32,7 +33,8 @@ internal fun timeGreeting(
 class HelloController(
     @param:Value("\${app.message:Hello World}") 
     private val message: String,
-    private val requestCounter: RequestCounter
+    private val requestCounter: RequestCounter,
+    private val messageLog: MessageLog
 ) {
 
     @GetMapping("/")
@@ -48,23 +50,32 @@ class HelloController(
         model.addAttribute("name", name)
         model.addAttribute("petitionCount", petitionCount)
 
+        if (count) {
+            messageLog.addMessage(greeting)
+        }
+        model.addAttribute("messages", messageLog.getMessages())
+
         return "welcome"
     }
 }
 
 @RestController
 class HelloApiController(
-    private val requestCounter: RequestCounter
+    private val requestCounter: RequestCounter,
+    private val messageLog: MessageLog
 ) {
 
     @GetMapping("/api/hello", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun helloApi(@RequestParam(defaultValue = "World") name: String): Map<String, String> {
         val petitionCount = requestCounter.increment()
+        val greeting = timeGreeting(name)
+        messageLog.addMessage(greeting)
 
         return mapOf(
-            "message" to timeGreeting(name),
+            "message" to greeting,
             "timestamp" to Instant.now().toString(),
-            "petitionCount" to petitionCount.toString()
+            "petitionCount" to petitionCount.toString(),
+            "messages" to messageLog.getMessages().joinToString(", ")
         )
     }
 }
