@@ -95,6 +95,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const page = new DOMParser().parseFromString(data, 'text/html');
                 const count = page.querySelector('#petitionCount')?.textContent;
                 if (count) document.querySelector('#petitionCount').textContent = count;
+                const messageLogBody = page.querySelector('#messageLogBody');
+                if (messageLogBody) {
+                    document.querySelector('#messageLogBody').innerHTML = messageLogBody.innerHTML;
+                }
             }
         } catch (error) {
             displayResponseInfo(0, 'Network Error', { error: error.message }, 'application/json');
@@ -121,10 +125,42 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response.ok && data.petitionCount) {
                 document.querySelector('#petitionCount').textContent = data.petitionCount;
             }
+            if (response.ok && data.messages) {
+                renderMessageLog(data.messages);
+            }
         } catch (error) {
             displayResponseInfo(0, 'Network Error', { error: error.message });
         }
     });
+
+    function renderMessageLog(messages) {
+        const messageLogBody = document.querySelector('#messageLogBody');
+        if (!messageLogBody) return;
+
+        messageLogBody.replaceChildren();
+        if (messages.length === 0) {
+            const row = messageLogBody.insertRow();
+            const cell = row.insertCell();
+            cell.colSpan = 2;
+            cell.className = 'text-muted';
+            cell.textContent = 'No messages logged yet.';
+            return;
+        }
+
+        messages.forEach(loggedMessage => {
+            const row = messageLogBody.insertRow();
+            const messageCell = row.insertCell();
+            messageCell.className = 'text-start';
+            messageCell.textContent = loggedMessage.text;
+            const timeCell = row.insertCell();
+            timeCell.className = 'text-end';
+            timeCell.textContent = new Date(loggedMessage.sentAt).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        });
+    }
     
     // Function to update the main message in the HTML
     function updateMainMessage(message, name) {

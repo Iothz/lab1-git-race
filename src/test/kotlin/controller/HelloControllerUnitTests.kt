@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.ui.Model
 import org.springframework.ui.ExtendedModelMap
 import es.unizar.webeng.hello.RequestCounter
+import es.unizar.webeng.hello.MessageLog
 import java.time.Instant
 import java.time.ZoneOffset
 
@@ -15,7 +16,7 @@ class HelloControllerUnitTests {
     
     @BeforeEach
     fun setup() {
-        controller = HelloController("Test Message", RequestCounter())
+        controller = HelloController("Test Message", RequestCounter(), MessageLog())
         model = ExtendedModelMap()
     }
     
@@ -55,13 +56,15 @@ class HelloControllerUnitTests {
     
     @Test
     fun `should return API response with timestamp`() {
-        val apiController = HelloApiController(RequestCounter())
+        val apiController = HelloApiController(RequestCounter(), MessageLog())
         val response = apiController.helloApi("Test")
+        val apiMessage = response["message"] as? String
+            ?: error("Expected the API message to be a string")
         
         assertThat(response).containsKey("message")
         assertThat(response).containsKey("timestamp")
-        assertThat(response["message"]).startsWith("Good ")
-        assertThat(response["message"]).endsWith("Test!")
+        assertThat(apiMessage).startsWith("Good ")
+        assertThat(apiMessage).endsWith("Test!")
         assertThat(response["timestamp"]).isNotNull()
     }
 }
