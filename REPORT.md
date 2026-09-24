@@ -1,4 +1,4 @@
-# Lab 1 Git Race -- Project Report
+<# Lab 1 Git Race -- Project Report
 
 This note uses the same disclosure fields as the group-project **AI use (10%)** slice. Lab 1 is still **limited**: assistive GenAI only — not a full or substantial generated solution. The project will later expect agents plus `AGENTS.md` and one skill; you do **not** need those here.
 
@@ -23,7 +23,29 @@ The increment will be considered successful when the following criteria are met:
 
 [Files and behaviour. Not a restatement of the starter README.]
 
-## Technical decisions
+Created the following files:
+- `src/main/kotlin/RequestCounterService.kt` 
+  - Service to maintain a counter of requests
+- `src/main/kotlin/MessageLog.kt`
+  - Service to maintain a log of the last 5 messages with timestamps
+- `src/main/kotlin/HealthRequestCounterFilter.kt`
+  - Filter designed to intercept automatic health check requests and prevent them from incrementing the request counter
+
+Edited the following files:
+- `src/main/kotlin/HelloController.kt`
+  - Edited to include the request counter and message log
+  - Added logic to display different greeting messages based on the time of day
+- `src/main/resources/templates/welcome.html`
+  - Edited to display the request counter, message log, and time-based greeting message
+- `src/main/resources/static/js/http-debug.js`
+  - Edited logic of `testWebBtn`  to include a count parameter to filter autoamatic health check requests and prevent them from incrementing the request counter
+  - Edited logic of `testHealthBtn` to include a count parameter to filter autoamatic health check requests and prevent them from incrementing the request counter
+  - Edited logic of `testWebBtn`, `testApiBtn` and `testHealthBtn` to refresh the page counter after every request
+  - Edited logic of `testWebBtn` and `testApiBtn` to refresh the visual message log after every request
+- `src/test/kotlin/controller/HelloControllerUnitTests.kt`, `src/test/kotlin/controller/HelloControllerMVCTests.kt` and `src/test/kotlin/controller/IntegrationTest.kt
+  - Added/adapted tests to verify the functionality of the request counter, message log, and time-based greeting messages
+
+# Technical decisions
 
 [Choices you own: API shape, tests, data, what you rejected.]
 
