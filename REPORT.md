@@ -1,8 +1,4 @@
-<# Lab 1 Git Race -- Project Report
-
-This note uses the same disclosure fields as the group-project **AI use (10%)** slice. Lab 1 is still **limited**: assistive GenAI only — not a full or substantial generated solution. The project will later expect agents plus `AGENTS.md` and one skill; you do **not** need those here.
-
-Do not invent a percentage of “AI vs original” lines. Empty or fake disclosure fails this lab.
+# Lab 1 Git Race -- Project Report
 
 ## What I specified
 
@@ -19,9 +15,8 @@ The increment will be considered successful when the following criteria are met:
   - Automated: A test verifies that the counter increments correctly with each post/request and appends the new message to the log capping at 5 messages.
   - Manual: Visually, posting new messages and checking the welcome page and the API endpoint shows the correct counter and message log.
 3. Build verification: Running `./gradlew check` completes without errors, confirming that all tests pass and the application builds successfully.
-## What I changed
 
-[Files and behaviour. Not a restatement of the starter README.]
+## What I changed
 
 Created the following files:
 - `src/main/kotlin/RequestCounterService.kt` 
@@ -47,22 +42,41 @@ Edited the following files:
 
 # Technical decisions
 
-[Choices you own: API shape, tests, data, what you rejected.]
+- The API was maintained the same as the starter project, with no additional endpoints. 
+
+
+- To test the message log and time-based greeting messages, unit tests were created to verify the functionality of the `HelloController` and its associated services. Request counter was tested trough MVC test to verify the full behaviour of the application.
+Additionally, previous existing tests were adapted to include the new functionality and ensure that the application behaves as expected.
+
+
+- Changed the response of the endpoints to include the request counter and message log in the response body, allowing for easier verification of the functionality through the API.
+  - Could have created a separate endpoint for the request counter and message log, but decided to keep it simple and maintain the same API shape as the starter project.
 
 ## How I verified
 
-[Commands (`./gradlew check`), what failed first, what you fixed. You remain accountable for correctness.]
+Once the new functionality was implemented, the following steps were taken to verify its correctness:
+1. Ran `./gradlew check` to ensure that all tests pass and the application builds successfully.
+2. Visually verified the functionality of the request counter, message log, and time-based greeting messages by visiting the welcome page and checking the displayed information.
+3. Used the API endpoints to verify the functionality of the request counter and message log, ensuring that the correct information is returned in the response body.
+
+As the new implemented functionalities were pretty simple and straightforward, no major issues were encountered during the verification process. The only **minor issues** were the **original outdated tests** and the **automatic messages** that were being sent to the application, which were incrementing the request counter and affecting the message log. This was resolved by implementing a filter to intercept these automatic health check requests and prevent them from affecting the request counter and message log.
 
 ## AI disclosure
 
-Fill **either** the list **or** the no-AI line.
+- **Tools / skills:**
+  - Github Copilot (extension for IntelliJ IDEA) for code completion, suggestions, explanations and redaction.
+- **Purpose:** 
+  - AI was used to explore different implementation options, fix errors and fasten and improve the report quality.
+- **Representative prompts:**
+  - "Is there a better way to store 5 messages in Kotlin?"
+  - "Why is better to define the counter as a service?"
+  - "Check the redaction of the report without changing the meaning"
+- **Affected files/sections:**
+  - All edited files were affected by AI at a certain extent, but the final implementation was reviewed by the author and all suggestions were either accepted, modified or rejected.
+- **Validation steps:**
+  - All suggestions were reviewed by the author and either accepted, modified or rejected. The final implementation was tested and verified manually to ensure correctness.
+- **Citations:** 
+  - No external sources were used for this lab.
+- **Human-reviewed:**
+  - All code and report were reviewed by the author to ensure correctness and clarity. If any code was not clear or understandable I would have asked for clarification or rejected the suggestion.
 
-- **Tools / skills:** …
-- **Purpose:** …
-- **Representative prompts:** … (or appendix)
-- **Affected files/sections:** …
-- **Validation steps:** …
-- **Citations:** … (external snippets you adapted)
-- **Human-reviewed:** what you checked, changed, or rejected
-
-Or: **No AI assistance** was used for this lab.
