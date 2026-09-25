@@ -133,6 +133,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Function to render the message log in the HTML, used only when the API endpoint is called and returns messages
+    // This function updates the message log table with the latest messages passing from JSON to HTML
+    // Not needed when the web page is tested, as the web page already has the message log rendered in HTML
     function renderMessageLog(messages) {
         const messageLogBody = document.querySelector('#messageLogBody');
         if (!messageLogBody) return;
